@@ -28,7 +28,7 @@ class Game:
             elif self.board[0,0] == 2:
                 return -10
 
-        if self.board[0, 2] == self.board[1, 1] and self.board[2, 0]: #Checking secondary diagonal
+        if self.board[0, 2] == self.board[1, 1] == self.board[2, 0]: #Checking secondary diagonal
             if self.board[2, 0] == 1:
                 return 10
             elif self.board[2, 0] == 2:
@@ -36,7 +36,7 @@ class Game:
 
         return 0
 
-    def is_game_over(self):
+    def is_board_full(self):
         game_over = True
         for i in range(self.board.shape[0]):
             for j in range(self.board.shape[1]):
@@ -53,7 +53,7 @@ class Game:
         if(board_score == -10): #minimizer won
             return board_score + subtree_height
 
-        if(self.is_game_over() == True): #it's a draw
+        if(self.is_board_full() == True): #it's a draw
             return 0
         
 
@@ -64,7 +64,7 @@ class Game:
                 for j in range(self.board.shape[1]):
                     if(self.board[i, j] == 0):
                         self.board[i, j] = self.ai_player
-                        best_move_evaluation = max( best_move_evaluation, self.__minimax(subtree_height + 1, False)) #makes the move and evaluates consequences
+                        best_move_evaluation = max(best_move_evaluation, self.__minimax(subtree_height + 1, False)) #makes the move and evaluates consequences
                         self.board[i, j] = 0
             return best_move_evaluation
         else: #should minimize
@@ -87,7 +87,6 @@ class Game:
             for j in range(self.board.shape[1]): #columns
                 if(self.board[i, j] == 0):
                     self.board[i, j] = self.ai_player #ai's move
-
                     current_move_value = self.__minimax(0, False) #compute possible opponent moves
 
                     self.board[i, j] = 0

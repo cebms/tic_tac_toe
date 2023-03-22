@@ -8,6 +8,10 @@ class Board:
         self.board = np.zeros((3,3), dtype=np.int8)
         self.shape = self.board.shape
 
+    def __setitem__(self, coordinates, value):
+        row, column = coordinates 
+        self.board[row][column] = value
+
     def __getitem__(self, coordinates):
        row, column = coordinates 
        return self.board[row, column]

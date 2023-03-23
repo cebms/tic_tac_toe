@@ -7,6 +7,14 @@ class Game:
         self.opponent = 2
         self.board = Board()
 
+    def __possible_moves(self):
+        moves = []
+        for i in range(self.board.shape[0]):
+            for j in range(self.board.shape[1]):
+                if(self.board[i, j] == 0):
+                    moves.append((i, j))
+        return moves
+
     def __evaluate_board(self):
         for i in range(self.board.shape[0]): #Checking rows
             if self.board[i, 0] == self.board[i, 1] == self.board[i, 2]:
@@ -60,22 +68,18 @@ class Game:
         if(is_ai_turn == True): #should maximize
             best_move_evaluation = float('-inf')
 
-            for i in range(self.board.shape[0]):
-                for j in range(self.board.shape[1]):
-                    if(self.board[i, j] == 0):
-                        self.board[i, j] = self.ai_player
-                        best_move_evaluation = max(best_move_evaluation, self.__minimax(subtree_height + 1, False)) #makes the move and evaluates consequences
-                        self.board[i, j] = 0
+            for move in self.__possible_moves():
+                self.board[move[0], move[1]] = self.ai_player
+                best_move_evaluation = max(best_move_evaluation, self.__minimax(subtree_height + 1, False)) #makes the move and evaluates consequences
+                self.board[move[0], move[1]] = 0
             return best_move_evaluation
         else: #should minimize
             best_move_evaluation = float('inf')
 
-            for i in range(self.board.shape[0]):
-                for j in range(self.board.shape[1]):
-                    if(self.board[i, j] == 0):
-                        self.board[i, j] = self.opponent
-                        best_move_evaluation = min(best_move_evaluation, self.__minimax(subtree_height + 1, True))
-                        self.board[i, j] = 0
+            for move in self.__possible_moves():
+                self.board[move[0], move[1]] = self.opponent
+                best_move_evaluation = min(best_move_evaluation, self.__minimax(subtree_height + 1, True))
+                self.board[move[0], move[1]] = 0
             return best_move_evaluation
 
     def find_ai_best_move(self):
@@ -83,17 +87,15 @@ class Game:
         best_move = () #(row, column)
 
         #for the current board, evaluate the result of playing on each empty slot
-        for i in range(self.board.shape[0]): #rows
-            for j in range(self.board.shape[1]): #columns
-                if(self.board[i, j] == 0):
-                    self.board[i, j] = self.ai_player #ai's move
-                    current_move_value = self.__minimax(0, False) #compute possible opponent moves
+        for move in self.__possible_moves():
+            self.board[move[0], move[1]] = self.ai_player #ai's move
+            current_move_value = self.__minimax(0, False) #compute possible opponent moves
 
-                    self.board[i, j] = 0
+            self.board[move[0], move[1]] = 0
 
-                    if(current_move_value > best_move_value):
-                        best_move_value = current_move_value
-                        best_move = (i, j)
+            if(current_move_value > best_move_value):
+                best_move_value = current_move_value
+                best_move = (move[0], move[1])
         
         return best_move
 
